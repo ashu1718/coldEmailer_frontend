@@ -8,10 +8,11 @@ import {
 import './App.css';
 import Login from './pages/Login';;
 import Signup from "./pages/SignUp";
-import LandingPage from "./pages/LandingPage";
+import GoogleAuthPage from "./pages/GoogleAuthPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
 import { AuthProvider } from "./contexts/AuthProvider";
-
+import EmailForm from "./pages/EmailForm";
 function App() {
   
   return (
@@ -19,13 +20,28 @@ function App() {
       <Routers>
         <Routes>
           <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="/login" element={<Login />} />
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            }
+          />
           <Route path="/signup" element={<Signup />} />
           <Route
-            path="/dashboard"
+            path="/google-auth"
             element={
               <ProtectedRoute>
-                  <LandingPage />
+                <GoogleAuthPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/cold-email-form"
+            element={
+              <ProtectedRoute>
+                <EmailForm />
               </ProtectedRoute>
             }
           />

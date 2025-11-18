@@ -14,7 +14,7 @@ const Login = () => {
   async function handleLogin(){
     try{
       const data= await login(email, password);
-      navigate("/dashboard");
+      navigate("/google-auth");
     }
     catch(err){
       const msg=err?.response?.data?.detail || "login failed";
