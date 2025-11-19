@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Input, Button, message } from "antd";
+import { Form, Input, Button, message, Select } from "antd";
 import api from "../api/axios"; // axios instance with interceptors
 
 const EmailForm = () => {
@@ -27,11 +27,18 @@ const EmailForm = () => {
       <h2>Send a Cold Email</h2>
       <Form layout="vertical" onFinish={onFinish}>
         <Form.Item
-          label="Recipient Email"
+          label="Recipients"
           name="to"
-          rules={[{ required: true, message: "Please enter recipient email" }]}
+          rules={[
+            { required: true, message: "Please enter at least one email" },
+          ]}
         >
-          <Input type="email" placeholder="example@email.com" />
+          <Select
+            mode="tags"
+            style={{ width: "100%" }}
+            placeholder="Enter email and press Enter"
+            tokenSeparators={[","]}
+          />
         </Form.Item>
 
         <Form.Item
