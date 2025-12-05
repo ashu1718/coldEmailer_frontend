@@ -1,30 +1,35 @@
 import React from "react";
-// import axios from "axios";
 import { Button } from "antd";
 import api from "../api/axios";
-const GoogleAuthPage=()=>{
-    const token = localStorage.getItem("access");
-    const handleGmailConnect= async ()=>{
-      try{
-        const res = await api.get("/api/v1/cold-emailer/google/login/");
-        
-        window.location.href= res.data.auth_url;
-      }
-      catch(err){
-        console.log("Error Loggin in GOOGLE", err);
-        
-      }
+import "../styles/GoogleAuthPage.css";
+const GoogleAuthPage = () => {
+  const handleGmailConnect = async () => {
+    try {
+      const res = await api.get("/api/v1/cold-emailer/google/login/");
+      window.location.href = res.data.auth_url;
+    } catch (err) {
+      console.log("Error Logging in GOOGLE", err);
     }
-    return (
-      <>
-      
-      <Button
-        type="primary"
-        onClick={handleGmailConnect}
+  };
+
+  return (
+    <div className="auth-root">
+      <div className="auth-card-modern">
+        <h2 className="auth-title">Connect Your Gmail</h2>
+        <p className="auth-description">
+          Authorize your Google account to start sending emails instantly.
+        </p>
+
+        <Button
+          type="primary"
+          className="connect-btn"
+          onClick={handleGmailConnect}
         >
-        Connect Gmail
-      </Button>
-      </>
-    );
-}
+          Connect Gmail
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 export default GoogleAuthPage;

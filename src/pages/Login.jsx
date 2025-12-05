@@ -4,22 +4,29 @@ import { LockOutlined, MailOutlined, LoginOutlined } from "@ant-design/icons";
 import "../styles/Login.css";
 import { useNavigate } from "react-router-dom";
 import { login } from "../api/auth";
-import {AuthContext} from "../contexts/AuthProvider";
+import { useAuth} from "../contexts/AuthProvider";
+import msg from "../utils/toast";
 const Login = () => {
   const navigate= useNavigate();
-  const {setUser} = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const {refreshStatus} = useAuth();
   async function handleLogin(){
     try{
       const data= await login(email, password);
+      await refreshStatus();
+      msg.success("Logged In Successfully!")
       navigate("/google-auth");
     }
     catch(err){
-      const msg=err?.response?.data?.detail || "login failed";
+      if(err?.response?.status===401){
+        msg.error("Invalid Credentials.")
+      }
+      else{
+        msg.error("Login Failed. Please Try Again.")
+      }
       console.log(err);
-      alert(msg);
+      
     }
   }
   return (

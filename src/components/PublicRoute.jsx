@@ -5,7 +5,7 @@ export default function PublicRoute({ children }) {
    const token = localStorage.getItem("access");
 
    if (token) {
-     return <Navigate to="/google-auth" replace />;
+     return <Navigate to="/cold-email-form" replace />;
    }
 
    return children;

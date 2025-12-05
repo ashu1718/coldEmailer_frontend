@@ -10,6 +10,7 @@ import "../styles/Signup.css";
 import { useNavigate } from "react-router-dom";
 import { signup } from "../api/auth";
 // import { AuthContext } from "../contexts/AuthProvider";
+import msg from "../utils/toast";
 const Signup = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -20,7 +21,7 @@ const Signup = () => {
   
   async function handleSignUp(){
     if(password!==confirmPassword){
-      alert("password doesn't match");
+      msg.error("Pay Attention!! Passwords Doesn't match.")
       return ;
     }
     try{
@@ -31,9 +32,11 @@ const Signup = () => {
         last_name: lastName,
         username: email,
       });
+      msg.success("Sign Up Success!! Welcome to ColdEmailer")
       navigate("/login");
     }
     catch(e){
+      msg.error("Sign Up Failed.")
       const msg= e?.response?.data || "signup failed";
       alert(msg);
     }

@@ -1,39 +1,60 @@
-import React, { createContext, useState, useEffect } from "react";
-import {  clearTokens } from "../utils/token";
+import { createContext, useContext, useEffect, useState } from "react";
 import api from "../api/axios";
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [ready, setReady] = useState(false);
+export const AuthProvider = ({ children }) => {
+  const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [gmailConnected, setGmailConnected] = useState(false);
 
-  useEffect(() => {
-    // Optionally, fetch current user if token exists
-    const init = async () => {
-      const access = localStorage.getItem("access");
-      if (access) {
-        try {
-          const resp = await api.get("/api/user/me/"); // provide endpoint in backend
-          setUser(resp.data);
-        } catch (err) {
-          // token invalid/expired — rely on interceptor to refresh if possible
-          setUser(null);
-        }
-      }
-      setReady(true);
-    };
-    // init();
-  }, []);
+  // Read token from localStorage at startup
+  const token = localStorage.getItem("access");
 
-  const signout = () => {
-    clearTokens();
-    setUser(null);
+  const refreshAuthStatus = async () => {
+    const access = localStorage.getItem("access");
+
+    if (!access) {
+      setIsLoggedIn(false);
+      setGmailConnected(false);
+      setLoading(false);
+      return;
+    }
+
+    setIsLoggedIn(true);
+
+    try {
+      const res = await api.get("/api/v1/cold-emailer/gmail-connection-status");
+      setGmailConnected(res.data.gmail_connected);
+    } catch (e) {
+      setGmailConnected(false);
+    }
+
+    setLoading(false);
   };
 
+  // Run once at startup
+  useEffect(() => {
+    refreshAuthStatus();
+  }, []);
+
+  const refreshStatus= async ()=>{
+    await refreshAuthStatus();
+  }
+
   return (
-    <AuthContext.Provider value={{ user, setUser, signout, ready }}>
+    <AuthContext.Provider
+      value={{
+        isLoggedIn,
+        gmailConnected,
+        loading,
+        refreshStatus,
+        refreshAuthStatus,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-}
+};
+
+export const useAuth = () => useContext(AuthContext);
